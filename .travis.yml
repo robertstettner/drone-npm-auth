@@ -1,0 +1,14 @@
+---
+sudo: required
+
+services:
+  - docker
+
+language: generic
+
+script:
+  - if [ "$TRAVIS_BRANCH" == "master" ]; then
+    docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
+    docker build . -t robertstettner/drone-npm-auth;
+    docker push robertstettner/drone-npm-auth;
+    fi

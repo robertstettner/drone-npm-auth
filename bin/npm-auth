@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+
+starttime=$(date +%s.%N)
+username="${NPM_USERNAME:-$PLUGIN_USERNAME}"
+password="${NPM_PASSWORD:-$PLUGIN_PASSWORD}"
+email="${NPM_EMAIL:-$PLUGIN_EMAIL}"
+registry="${NPM_REGISTRY:-$PLUGIN_REGISTRY}"
+scope="${NPM_SCOPE:-$PLUGIN_SCOPE}"
+path="${PLUGIN_PATH:-./}"
+
+echo "-- Generating authentication from NPM..."
+
+set -e
+
+if [ -z "$username" ]; then
+    echo "-- Username is not set!"
+    exit 1
+fi
+if [ -z "$password" ]; then
+    echo "-- Password is not set!"
+    exit 1
+fi
+if [ -z "$email" ]; then
+    echo "-- Email is not set!"
+    exit 1
+fi
+if [ -z "$registry" ]; then
+    registry="registry.npmjs.org"
+fi
+if [ -z "$scope" ]; then
+    scope_option=""
+else
+    scope_option="--scope=$scope"
+fi
+
+expect-npm-auth "npm login --registry $registry $scope_option" $username $password $email >/dev/null 2>&1
+
+endtime=$(date +%s.%N)
+echo "duration: $(echo "$endtime $starttime" | awk '{printf "%f", $1 - $2}')s"
+
+if [ ! -e ~/.npmrc ]; then
+    echo "-- Error logging into NPM"
+    exit 1
+else
+    echo $(cat ~/.npmrc) | sed 's/[[:blank:]]\+/\n/g' > $path.npmrc
+    echo "-- NPM authentication generation done!"
+fi
