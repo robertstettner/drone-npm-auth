@@ -7,14 +7,17 @@ Drone plugin for authenticating into NPM to install private dependencies.
 
 The following parameters are used to configure the plugin:
 
-- `username`: The NPM username. Required.
-- `password`: The NPM password. Required.
-- `email`: The NPM email. Required.
+- `token`: The NPM token. Required (when not using credentials).
+- `username`: The NPM username. Required (when using credentials).
+- `password`: The NPM password. Required (when using credentials).
+- `email`: The NPM email. Required (when using credentials).
 - `registry`: The NPM registry. Defaults to the default NPM registry.
 - `scope`: Scope of the NPM authentication. Optional.
 - `path`: Output path of the generated `.npmrc` file. Defaults to `./`.
 
 ### Drone configuration example
+
+#### Using credentials
 
 ```yaml
 pipeline:
@@ -33,6 +36,22 @@ pipeline:
       event: [push, pull_request]
 ```
 
+#### Using token
+
+```yaml
+pipeline:
+  npm_auth:
+    image: robertstettner/drone-npm-auth
+    token: a12445e4424c121323a
+
+  build:
+    image: node:6
+    commands:
+      - npm install
+      - npm test
+    when:
+      event: [push, pull_request]
+```
 
 ## License
 

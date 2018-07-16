@@ -7,33 +7,38 @@ email="${NPM_EMAIL:-$PLUGIN_EMAIL}"
 registry="${NPM_REGISTRY:-$PLUGIN_REGISTRY}"
 scope="${NPM_SCOPE:-$PLUGIN_SCOPE}"
 path="${PLUGIN_PATH:-./}"
-
-echo "-- Generating authentication from NPM..."
+token="${NPM_TOKEN:-$PLUGIN_TOKEN}"
 
 set -e
 
-if [ -z "$username" ]; then
-    echo "-- Username is not set!"
-    exit 1
-fi
-if [ -z "$password" ]; then
-    echo "-- Password is not set!"
-    exit 1
-fi
-if [ -z "$email" ]; then
-    echo "-- Email is not set!"
-    exit 1
-fi
+echo "-- Setting up authentication from NPM..."
+
 if [ -z "$registry" ]; then
     registry="registry.npmjs.org"
 fi
-if [ -z "$scope" ]; then
-    scope_option=""
-else
-    scope_option="--scope=$scope"
-fi
+if [ -z "$token" ]; then
+    if [ -z "$username" ]; then
+        echo "-- Username is not set!"
+        exit 1
+    fi
+    if [ -z "$password" ]; then
+        echo "-- Password is not set!"
+        exit 1
+    fi
+    if [ -z "$email" ]; then
+        echo "-- Email is not set!"
+        exit 1
+    fi
+    if [ -z "$scope" ]; then
+        scope_option=""
+    else
+        scope_option="--scope=$scope"
+    fi
 
-expect-npm-auth "npm login --registry $registry $scope_option" $username $password $email >/dev/null 2>&1
+    expect-npm-auth "npm login --registry $registry $scope_option" $username $password $email >/dev/null 2>&1
+else
+    echo "//$registry/:_authToken=$token" > ~/.npmrc
+fi
 
 endtime=$(date +%s.%N)
 echo "duration: $(echo "$endtime $starttime" | awk '{printf "%f", $1 - $2}')s"
@@ -43,5 +48,5 @@ if [ ! -e ~/.npmrc ]; then
     exit 1
 else
     echo $(cat ~/.npmrc) | sed 's/[[:blank:]]\+/\n/g' > $path.npmrc
-    echo "-- NPM authentication generation done!"
+    echo "-- NPM authentication done!"
 fi
