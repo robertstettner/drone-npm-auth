@@ -47,6 +47,7 @@ if [ ! -e ~/.npmrc ]; then
     echo "-- Error logging into NPM"
     exit 1
 else
+    printf "\n" >> $path.npmrc
     cat ~/.npmrc >> $path.npmrc
     echo "-- NPM authentication done!"
 fi
