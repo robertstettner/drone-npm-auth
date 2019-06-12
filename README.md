@@ -28,7 +28,7 @@ pipeline:
     email: jb@me.com
 
   build:
-    image: node:6
+    image: node:8
     commands:
       - npm install
       - npm test
@@ -45,7 +45,7 @@ pipeline:
     token: a12445e4424c121323a
 
   build:
-    image: node:6
+    image: node:8
     commands:
       - npm install
       - npm test
