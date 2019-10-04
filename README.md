@@ -1,4 +1,5 @@
 # drone-npm-auth
+
 [![Build Status](https://travis-ci.org/robertstettner/drone-npm-auth.svg?branch=master)](https://travis-ci.org/robertstettner/drone-npm-auth)
 
 Drone plugin for authenticating into NPM to install private dependencies.
@@ -16,6 +17,50 @@ The following parameters are used to configure the plugin:
 - `path`: Output path of the generated `.npmrc` file. Defaults to `./`.
 
 ### Drone configuration example
+
+#### Using credentials
+
+```yaml
+steps:
+  - name: npm_auth
+    image: robertstettner/drone-npm-auth
+    settings:
+      username: joebloggs
+      password: mypass
+      email: jb@me.com
+
+  - name: build
+    image: node:8
+    commands:
+      - npm install
+      - npm test
+    when:
+      event:
+        - push
+        - pull_request
+```
+
+#### Using token
+
+```yaml
+steps:
+  - name: npm_auth
+    image: robertstettner/drone-npm-auth
+    settings:
+      token: a12445e4424c121323a
+
+  - name: build
+    image: node:8
+    commands:
+      - npm install
+      - npm test
+    when:
+      event:
+        - push
+        - pull_request
+```
+
+### Drone configuration example < v1.0
 
 #### Using credentials
 
