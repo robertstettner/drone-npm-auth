@@ -37,7 +37,11 @@ if [ -z "$token" ]; then
 
     expect-npm-auth "npm login --registry $registry $scope_option" $username $password $email >/dev/null 2>&1
 else
-    echo "//$registry/:_authToken=$token" > ~/.npmrc
+    echo "//${registry//http[s]*:\/\//}/:_authToken=$token" > ~/.npmrc
+
+    if [ -n "$scope" ]; then
+        echo "$scope:registry=$registry" >> ~/.npmrc
+    fi
 fi
 
 endtime=$(date +%s.%N)
