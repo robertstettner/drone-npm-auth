@@ -1,4 +1,4 @@
-FROM node:8.16.0-slim
+FROM node:14.18.0-slim
 
 # Install packages
 RUN apt-get update && apt-get install -yq \
